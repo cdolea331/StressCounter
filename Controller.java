@@ -36,8 +36,11 @@ public class Controller {
     private boolean[] playerAfflicted = {false, false, false, false};
 
 
-
-
+    /**
+     * Initializes GUI elements and listeners. Explicit definition in this method is required, otherwise they seem
+     * to be unable to be referenced by the controller. This is likely remediable however since there is no longer
+     * a use for the application it will remain as is.
+     */
     @FXML
     public void initialize(){
         spinners[0] = p1StressMeter;
@@ -100,7 +103,7 @@ public class Controller {
                         spinner.increment((currentMaxValue));
                     }
                     if((int)newValue >= (currentMaxValue/2)){
-                        resolveTest(playerNum, currentMaxValue);
+                        resolveTest(playerNum);
                     }
                     if((int)newValue == currentMaxValue){
                         heartAttack(playerNum);
@@ -121,6 +124,11 @@ public class Controller {
 
     }//End init
 
+    /**
+     * Changes age, setting new stress limits for resolve tests and heart attacks.
+     * @param age Age which is to be set. Heart attack limits: Feudal:20, Castle:40, Imperial:60. Resolve test limits
+     *            are half of this
+     */
     @FXML
     public void ageChange(Age age){
         switch (age){
@@ -156,7 +164,12 @@ public class Controller {
         }//End switch
     }//End ageChange
 
-    public void resolveTest(int playerNum, int currentMax){
+    /**
+     * Runs a resolve test on the player, with a percent chance of generating a negative or positive status based on how
+     * many players are active.
+     * @param playerNum Player to be tested.
+     */
+    public void resolveTest(int playerNum){
         Random rng = new Random();
         int roll = rng.nextInt(100);
         String affliction;
@@ -194,6 +207,10 @@ public class Controller {
 
     }//End resolveTest
 
+    /**
+     * Enacts heart attack status on player. Irreversible till reset.
+     * @param playerNum Number to be altered.
+     */
     public void heartAttack(int playerNum){
         if(!playerVirtue[playerNum]) {
             statusLabels[playerNum].setText("HEART ATTACK!!!");
@@ -201,6 +218,11 @@ public class Controller {
             statusLabels[playerNum].setTextFill(Color.DARKRED);
         }
     }
+
+    /**
+     * Resets a player's status to normal and stress to 0.
+     * @param player Player to be reset.
+     */
     @FXML
     public void playerReset(int player){
         statusLabels[player].setText("Doing fine");
@@ -210,6 +232,11 @@ public class Controller {
         playerAfflicted[player] = false;
         playerVirtue[player] = false;
     }
+
+    /**
+     * Saves values of all current players as well as current age in a simple text file stored in the same folder as the executable files to
+     * be loaded on startup later.
+     */
     @FXML
     public void saveState(){
 
@@ -225,6 +252,9 @@ public class Controller {
         }
     }
 
+    /**
+     * Loads and sets character statuses and stress values, as well as current age from Stress_save.txt
+     */
     @FXML
     public void loadState(){
         try(BufferedReader br = new BufferedReader(new FileReader("Stress_save.txt"))){
@@ -273,6 +303,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Sets virtue for a player. Makes them immune to further heart attack/resolve tests until reset.
+     * @param player Player to be altered
+     * @param virtue Specific virtue to be set
+     */
     private void setVirtue(int player, String virtue){
         statusLabels[player].setTextFill(Color.GOLD);
         statusLabels[player].setScaleY(1.3);
@@ -281,6 +316,12 @@ public class Controller {
         playerVirtue[player] = true;
 
     }
+
+    /**
+     * Sets affliction for a player. Makes them immune to further heart attack/resolve tests until reset.
+     * @param player Player to be altered
+     * @param affliction Specific affliction to be set
+     */
     private void setAffiliction(int player, String affliction){
 
             statusLabels[player].setTextFill(Color.RED);
@@ -291,6 +332,9 @@ public class Controller {
 
     }
 
+    /**
+     * Increments all  players selected as active by the amount currently in the team increment/decrement spinner.
+     */
     @FXML
     private void teamIncrement(){
         for(int i = 0; i < 4; i++){
@@ -299,6 +343,9 @@ public class Controller {
             }
         }
     }
+    /**
+     * Decrements all  players selected as active by the amount currently in the team increment/decrement spinner.
+     */
     @FXML
     private void teamDecrement(){
         for(int i = 0; i < 4; i++){
